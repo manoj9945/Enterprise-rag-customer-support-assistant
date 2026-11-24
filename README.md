@@ -1,118 +1,228 @@
 # Enterprise AI Customer Support & E-Commerce Assistant
 
-An integrated learning/demo application combining:
-- Document RAG for policies, FAQs and product information
-- SQL-backed customer, order, product, inventory and ticket lookups
-- Business snapshot reporting
-- FastAPI backend and Streamlit frontend
-- JWT-based demo login
-- PDF, DOCX, TXT, CSV and Excel document ingestion
+This project is a small e-commerce support application that brings customer and order lookups together with an AI-powered document assistant.
 
-## Important scope and honesty notes
+I built it to explore how RAG, SQL queries and APIs can work together in one application.
 
-This is a functional learning/demo foundation, not a production enterprise platform. The included data is synthetic. The default login is `admin` / `admin123`; change it before any shared deployment. The demo JWT secret must also be changed. RBAC is represented by a demo admin token and should be expanded into a real user/role store before production.
+The application includes:
 
-The local no-key RAG fallback uses a deterministic hashed-token vector and lexical matching. This makes the demo usable without a paid API key, but it is not equivalent to a neural embedding model. Set an OpenAI API key in `.env` to use OpenAI embeddings and generated answers. API usage may incur charges.
+- An AI assistant that answers questions using uploaded documents such as FAQs, return policies and shipping policies.
+- Customer, order, product, inventory and support ticket lookups using SQL.
+- A basic business dashboard with order and inventory information.
+- Document upload and ingestion for PDF, DOCX, TXT, CSV and Excel files.
+- A FastAPI backend and Streamlit frontend.
+- JWT-based authentication for the demo login.
 
-Python 3.14 compatibility depends on the available wheels for each third-party package. If installation fails, use the error output to adjust package versions or install Python 3.12 side-by-side. Docker is optional for this local version.
+## Technologies used
+
+- Python
+- FastAPI
+- Streamlit
+- SQLite
+- SQLAlchemy
+- Ollama (`qwen2.5:3b`)
+- RAG (Retrieval-Augmented Generation)
+- JWT authentication
+
+## How the application works
+
+The application handles different types of questions through different paths:
+
+1. Questions about customers, orders, products, inventory and tickets are handled using database queries.
+2. Business-related questions are handled by the reporting logic.
+3. Questions about policies, FAQs and uploaded documents go through the RAG pipeline. Relevant document content is retrieved and passed to Ollama to generate an answer.
+
+The application uses local hashed-token vectors and lexical matching for document retrieval. Ollama is used to generate answers from the retrieved content.
 
 ## Requirements
 
-- Windows 10/11
-- Python 3.14 (the project will attempt this environment first)
-- Internet for first-time package installation
-- Optional OpenAI API key for neural embeddings and LLM answers
+- Windows 10 or 11
+- Python 3.14
+- Git (optional, for cloning the repository)
+- Ollama installed
+- Internet connection for the initial package installation
 
-## Quick start (Windows)
+The application uses a local Ollama model, so an OpenAI API key is not required.
 
-1. Extract the ZIP to a folder you can write to.
-2. Open PowerShell in the extracted `Enterprise_RAG_Assistant` folder.
-3. Run:
+## Setup
 
-   ```powershell
-   .\run_project.bat
-   ```
+### 1. Clone the repository
 
-4. Wait for both terminal windows to start.
-5. Open `http://localhost:8501`.
-6. Sign in with `admin` / `admin123`.
+```powershell
+git clone https://github.com/manoj9945/Enterprise-rag-customer-support-assistant.git
+cd Enterprise-rag-customer-support-assistant
+```
 
-The first run creates `.venv`, installs dependencies, creates the SQLite database and seeds sample records.
+### 2. Install and prepare Ollama
 
-## Manual start
+Download and install Ollama from:
+
+https://ollama.com/
+
+Open PowerShell and download the model:
+
+```powershell
+ollama pull qwen2.5:3b
+```
+
+Make sure Ollama is running before starting the application.
+
+### 3. Start the application
+
+Run this command from the project folder:
+
+```powershell
+.\run_project.bat
+```
+
+The startup script creates the Python virtual environment if needed, installs the required packages and starts the backend and frontend.
+
+### 4. Open the application
+
+Open this address in your browser:
+
+http://localhost:8501
+
+Use the following demo credentials:
+
+- Username: `admin`
+- Password: `admin123`
+
+The database is created and sample records are added during the initial setup.
+
+## Manual setup
+
+If you prefer to start the services separately, follow these steps.
+
+Create a virtual environment:
 
 ```powershell
 python -m venv .venv
+```
+
+Activate it:
+
+```powershell
 .\.venv\Scripts\Activate.ps1
+```
+
+Install the dependencies:
+
+```powershell
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+pip install -r requirements.txt
+```
+
+Copy the example environment file:
+
+```powershell
 Copy-Item .env.example .env
+```
+
+Start the FastAPI backend:
+
+```powershell
 uvicorn backend.main:app --reload
 ```
 
-In a second PowerShell window:
+Open another PowerShell window, navigate to the project folder, activate the virtual environment and start Streamlit:
 
 ```powershell
-cd path\to\Enterprise_RAG_Assistant
-.\.venv\Scripts\Activate.ps1
-streamlit run frontend\app.py
+streamlit run frontend/app.py
 ```
 
-API docs: `http://127.0.0.1:8000/docs`
-Frontend: `http://localhost:8501`
+The application will be available at:
 
-## Configure OpenAI (optional)
+- Frontend: http://localhost:8501
+- API: http://127.0.0.1:8000
+- API documentation: http://127.0.0.1:8000/docs
 
-Open `.env` and set:
+## Example questions to try
 
-```env
-OPENAI_API_KEY=your_api_key_here
-OPENAI_MODEL=gpt-4o-mini
-OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-```
+**Customer and order queries**
 
-Restart the API after changing `.env`. Do not commit `.env` or share your API key.
+- How many customers are there?
+- Show me all orders and their statuses.
+- Where is order 3?
 
-## Example questions
+**Inventory queries**
 
-- `Where is order 3?`
-- `Show customers`
-- `Show current inventory`
-- `Show monthly sales revenue`
-- `What is your return policy?`
-- `How long do refunds take?`
-- `How do I report a damaged item?`
+- Show current inventory.
+- Which products have low stock?
 
-## Project layout
+**Business reports**
+
+- Show sales report.
+- What is the total revenue?
+
+**Document-based questions**
+
+- What is your return policy?
+- How long does delivery take?
+- How do I report a damaged item?
+
+You can also upload your own supported documents and ask questions about their content.
+
+## Project structure
 
 ```text
-backend/       FastAPI routes, database models, routing, RAG and security
-frontend/      Streamlit application
-data/documents Sample policies, FAQ and product data
-tests/         Basic unit tests
-requirements.txt
-.env.example
-run_project.bat
+Enterprise_RAG_Assistant/
+│
+├── backend/
+│   ├── main.py
+│   ├── db.py
+│   ├── models.py
+│   ├── rag.py
+│   ├── security.py
+│   ├── seed.py
+│   └── services.py
+│
+├── frontend/
+│   └── app.py
+│
+├── data/
+│   └── documents/
+│
+├── docs/
+│   ├── API.md
+│   ├── ARCHITECTURE.md
+│   └── INTERVIEW_GUIDE.md
+│
+├── tests/
+├── requirements.txt
+├── .env.example
+├── .gitignore
+└── run_project.bat
 ```
 
-## Current implementation boundaries
+## Current limitations
 
-- The query router uses transparent Python rules, not a general autonomous agent.
-- The reports module currently returns a basic operational snapshot; monthly time-series reporting is a natural next enhancement.
-- Retrieval combines semantic-vector similarity (OpenAI embeddings when configured, local hashed-vector fallback otherwise) and lexical overlap. It includes chunking, source metadata and score-based reranking, but does not yet implement a full parent-child index, neural cross-encoder reranker, or RAGAS benchmark suite.
-- Conversational memory is maintained in the Streamlit session display; persistent multi-turn memory is not implemented.
-- Authentication uses a demo admin account. Production requires a real user store, stronger RBAC, rate limiting, audit logs and secret management.
-- Uploads are stored locally under `data/documents`. Review access controls and file limits before deployment.
+This is a learning and demonstration project, not a production-ready enterprise application.
 
-## Run tests
+A few things to keep in mind:
+
+- The question router uses Python keyword rules rather than an autonomous AI agent.
+- Document retrieval uses local hashed-token vectors and lexical matching. It does not use a dedicated neural embedding model or an external vector database.
+- The reporting functionality currently provides a basic operational snapshot.
+- The application keeps conversation messages in the Streamlit session. Persistent conversational memory is not implemented.
+- Authentication uses a demo admin account. A production application would need a proper user management system, stronger role-based access control and additional security measures.
+- Uploaded documents are stored locally in the `data/documents` folder.
+- The sample customer, order and product records are synthetic.
+
+Change the default demo password and JWT secret before using the application in any shared environment.
+
+## Running tests
+
+Activate the virtual environment and run:
 
 ```powershell
-pytest -q
+python -m pytest -q
 ```
 
 ## Troubleshooting
 
-- If `python` points to the wrong installation, check `python --version` and `where.exe python`.
-- If a package fails to install on Python 3.14, copy the complete error. We may need a compatible package version or Python 3.12.
-- If the UI says it cannot connect, check that the backend terminal is running and visit `/health`.
-- If port 8000 or 8501 is busy, stop the other process or change the port.
+- If the application cannot connect to Ollama, check whether Ollama is running.
+- If the model is missing, run `ollama pull qwen2.5:3b`.
+- If the frontend cannot connect to the backend, make sure the FastAPI server is running.
+- If a Python package fails to install, check the Python version and the installation error.
+- If ports 8000 or 8501 are already in use, stop the process using the port before restarting the application.
