@@ -1,0 +1,28 @@
+# Python environments
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment secrets
+.env
+
+# Test cache
+.pytest_cache/
+
+# Streamlit local configuration
+.streamlit/
+
+# Local database
+data/ecommerce.db
+
+# Local vector store
+data/vector_store.json
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+backend/rag_backup_before_retrieval.py.py

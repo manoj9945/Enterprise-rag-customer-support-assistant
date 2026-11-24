@@ -1,0 +1,16 @@
+FREQUENTLY ASKED QUESTIONS
+
+Q: How can I cancel an order?
+A: Orders can be cancelled while they are in Processing status. Once an order has been shipped, cancellation may no longer be possible. Contact support for help.
+
+Q: How do I check my order?
+A: Sign in and open Orders, or provide your order number to the support assistant.
+
+Q: When will I receive my refund?
+A: After the refund is processed, the original payment provider may take 5 to 10 business days to display the credit.
+
+Q: How can I contact support?
+A: Create a support ticket from the customer portal. Include your order number and a clear description of the issue.
+
+Q: What does low stock mean?
+A: In this demo, a product with fewer than 5 units is flagged as low stock.
